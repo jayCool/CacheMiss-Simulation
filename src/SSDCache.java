@@ -16,7 +16,7 @@ import java.util.Queue;
  *
  * @author Zhang-Jiangwei
  */
-class IQIYISSDCache extends LinkedHashMap<String, Long> {
+class SSDCache extends LinkedHashMap<String, Long> {
 
     public HashMap<String, Double> objectSize = new HashMap<String, Double>();
     double cacheSize = 0;
@@ -24,7 +24,7 @@ class IQIYISSDCache extends LinkedHashMap<String, Long> {
     Queue<CacheObject> objectPQ;
     int initialSize = 1000;
 
-    public IQIYISSDCache(long cacheSize) {
+    public SSDCache(long cacheSize) {
         this.cacheSize = cacheSize;
         int queueCapacity = Math.min(8000000, (int)cacheSize);
         objectPQ = new PriorityQueue<>(queueCapacity, objectComparator);

@@ -16,7 +16,7 @@ import java.util.Queue;
  *
  * @author Zhang-Jiangwei
  */
-class IQIYIHDDCache extends LinkedHashMap<String, Long> {
+class HDDCache extends LinkedHashMap<String, Long> {
 
     HashMap<String, Double> objectSize = new HashMap<String, Double>();
     double cacheSize=0;
@@ -42,7 +42,7 @@ class IQIYIHDDCache extends LinkedHashMap<String, Long> {
     }
     
     
-    public IQIYIHDDCache(long cacheSize){
+    public HDDCache(long cacheSize){
         this.cacheSize = cacheSize;
         int queueCapacity = Math.min(8000000, (int)cacheSize);
         objectPQ = new PriorityQueue<>(queueCapacity, objectComparator);

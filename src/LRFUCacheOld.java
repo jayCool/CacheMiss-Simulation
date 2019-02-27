@@ -44,7 +44,7 @@ public class LRFUCacheOld {
         return pq.containsKey(object);
     }
 
-    public String addLRFU(String object, long time) {
+    public String add(String object, long time) {
         String minimal = refresh(object);
 
         if (!this.pq.containsKey(object)) {

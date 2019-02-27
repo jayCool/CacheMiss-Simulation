@@ -9,13 +9,15 @@
  * @author jw
  */
 public class CacheType {
-   public static int FIFO = 1;
-   public static int LRU = 2;
-   public static int Random = 3;
-   public static int ARC = 4;
-   public static int LRFU = 5;
-   public static int LRFU_DiffSize = 6;
-   public static int SSD = 7;
-   public static int HDD = 8;
+   final public static int FIFO = 1;
+   final public static int LRU = 2;
+   final public static int RANDOM = 3;
+   final public static int ARC = 4;
+   final public static int LRFU = 5;
+   final public static int LRFU_NON_UNIFORM = 6;
+   final public static int SSD = 7;
+   final public static int HDD = 8;
+   final public static int LRUP = 9;
+   
    
 }
