@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulator/src/ReferenceComparator.java</file>
+            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulator/src/Clock.java</file>
+            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulator/src/CacheType.java</file>
+            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulator/src/CacheStrategy.java</file>
+            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulator/src/Cache.java</file>
+            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulator/src/Simulator.java</file>
+            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulator/src/ReferencePattern.java</file>
+            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulator/src/LRUpCache.java</file>
+            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulator/src/ArgumentParser.java</file>
+            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulator/src/CacheObject.java</file>
+            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulator/src/CacheStatus.java</file>
+        </group>
+    </open-files>
+</project-private>
