@@ -1,3 +1,5 @@
+package caches;
+
 
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -12,7 +14,7 @@ import java.util.LinkedHashSet;
  *
  * @author jw
  */
-class LFUCache {
+public class LFUCache {
 
    HashMap<String, Integer> vals;
     HashMap<String, Integer> counts;

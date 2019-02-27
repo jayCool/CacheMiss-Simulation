@@ -236,7 +236,7 @@ public class Simulator {
             if (cache.getCacheStrategy() != CacheStrategy.MCD) {
                 cache.add(rp.getObject(), clock.currentTime, rp.getObjSize());
             } else if (rp.getChildID() >= 0) {
-                cache.remove(rp.getObject(), clock.currentTime);
+                cache.remove(rp.getObject());
             }
 
             passEventToChild(cacheMaps, rp, clock, client_requests);

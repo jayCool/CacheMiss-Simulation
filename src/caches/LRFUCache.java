@@ -1,3 +1,5 @@
+package caches;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -11,14 +13,14 @@ import java.util.Map.Entry;
  *
  * @author JIANGWEI
  */
-public class LRFUCacheOld {
+public class LRFUCache {
 
     HashMap<String, Double> pq = new HashMap<>();
 
     double lamba = 0.0;
     int cacheSize = 0;
 
-    LRFUCacheOld(int cacheSize) {
+    public LRFUCache(int cacheSize) {
         pq = new HashMap<String, Double>(cacheSize);
         this.cacheSize = cacheSize;
     }
@@ -73,6 +75,10 @@ public class LRFUCacheOld {
         
     void setlamba(double lamda) {
         this.lamba = lamda;}
+
+    public void remove(String object) {
+        this.pq.remove(object);
+    }
    
 
 }

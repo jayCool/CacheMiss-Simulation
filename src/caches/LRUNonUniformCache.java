@@ -1,3 +1,5 @@
+package caches;
+
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -14,7 +16,7 @@ import java.util.Queue;
  *
  * @author Zhang-Jiangwei
  */
-class LRUNonUniformCache extends LinkedHashMap<String, Long> {
+public class LRUNonUniformCache extends LinkedHashMap<String, Long> {
 
     HashMap<String, Integer> objectSize = new HashMap<String, Integer>();
     double cacheSize=0;
@@ -89,6 +91,10 @@ class LRUNonUniformCache extends LinkedHashMap<String, Long> {
             curSize -= objectSize.get(key);
             objectSize.remove(key);
         }
+    }
+
+    public boolean contains(String object) {
+        return this.objectSize.containsKey(object);
     }
     
     

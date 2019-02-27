@@ -1,3 +1,5 @@
+package caches;
+
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -16,7 +18,7 @@ import java.util.Queue;
  *
  * @author Zhang-Jiangwei
  */
-class HDDCache extends LinkedHashMap<String, Long> {
+public class HDDCache extends LinkedHashMap<String, Long> {
 
     HashMap<String, Double> objectSize = new HashMap<String, Double>();
     double cacheSize=0;
@@ -124,6 +126,10 @@ class HDDCache extends LinkedHashMap<String, Long> {
             count = objectFrequencies.get(object);
         }
         objectFrequencies.put(object, count+1);
+    }
+
+    public boolean contains(String object) {
+        return objectSize.containsKey(object);
     }
     
     

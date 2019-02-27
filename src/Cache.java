@@ -4,6 +4,14 @@
  * and open the template in the editor.
  */
 
+import caches.ARCCache;
+import caches.SSDCache;
+import caches.FIFOCache;
+import caches.LRUNonUniformCache;
+import caches.HDDCache;
+import caches.LRUCache;
+import caches.LRFUCache;
+import caches.RandomCache;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.PriorityQueue;
@@ -18,28 +26,25 @@ public class Cache {
    
     long cacheSize;
     int cacheID;
- 
-    int cacheType; // 1 FIFO, 2 LRU, 3 RANDOM, 4 ARC, 7, SSD, 8 HDD, 9 lrupcache
+    int cacheType; // 1 FIFO, 2 LRU, 3 RANDOM, 4 ARCCache, 7, SSD, 8 HDD
     int cacheStrategy = 1; //1 LCE, 2 LCD, 3 MCD
     double totalReceived = 0;
     double totalMissed = 0;
-  
-    LRFUCacheOld lrfu;
+    int missRatioOption = 0; // 0 for by request, 1 by object size
+    boolean cacheFull = false;
+    
+    LRFUCache lrfuCache;
     LRUCache lruCache;
-    LRUpCache lrupCache;
-    ARC arcCache;
-    LRUNonUniformCache LRUNUC;
-    SSDCache iqiyissdcache;
-    HDDCache iqiyihddcache;
+    ARCCache arcCache;
+    LRUNonUniformCache lruNonUniformCache;
+    SSDCache ssdCache;
+    HDDCache hddCache;
     FIFOCache fifoCache;
    
     private ArrayList<Cache> children = new ArrayList<>();
     public Cache parent;
     private RandomCache randCache;
-     PriorityQueue<ReferencePattern> eventList;
-    int p = 0;
-    int missRatioOption = 0; // 0 for by request, 1 by object size
-    boolean cacheFull = false;
+    PriorityQueue<ReferencePattern> eventList;
     
    
     
@@ -51,16 +56,13 @@ public class Cache {
     Cache() {
     }
 
+    /**
+     * add a child to the current cache
+     * @param child 
+     */
     public void addChild(Cache child) {
         children.add(child);
     }
-    
-    public String getARCstring(){
-        if (cacheFull)
-           return "" + arcCache.t1.curSize + " "+ arcCache.t2.curSize +" "+ arcCache.b1.objectSize.size() +" "+ arcCache.b2.objectSize.size()+" "+arcCache.p;
-        else return "";
-    }
-
   
     /**
      * 
@@ -78,31 +80,39 @@ public class Cache {
             case CacheType.ARC:
                 return "ARC Cache: " + arcCache.toString();
             case CacheType.LRFU:
-                return "LRFU Cache: " + lrfu.toString().trim();
-            case CacheType.LRFU_NON_UNIFORM:
-                return "LRU_NON_UNIFORM Cache: " + LRUNUC.size();
+                return "LRFU Cache: " + lrfuCache.toString().trim();
+            case CacheType.LRU_NON_UNIFORM:
+                return "LRU_NON_UNIFORM Cache: " + lruNonUniformCache.size();
             case CacheType.SSD:
-                return "SSD Cache: " + iqiyissdcache.toString();
+                return "SSD Cache: " + ssdCache.toString();
             case CacheType.HDD:
-                return "HDD Cache: " + iqiyihddcache.toString();
-            case CacheType.LRUP:
-                return "LRUpCache: " + lrupCache.toString();
+                return "HDD Cache: " + hddCache.toString();
         }
         return "something interesting!!!!";
     }
 
+    /**
+     * 
+     * @return the evicted objects by HDD Cache
+     */
     ArrayList<String> getEvictedObjects() {
-        return iqiyihddcache.getEvictedBatchObjectes();
+        return hddCache.getEvictedBatchObjectes();
     }
 
+    /**
+     * 
+     * @return the evicted objects' cache size
+     */
     ArrayList<Integer> getEvictedObjectSizes() {
-        return iqiyihddcache.getEvictedBatchObjectSizes();
+        return hddCache.getEvictedBatchObjectSizes();
     }
-
-    public void setLamda(double lamda) {
-        this.lrfu.setlamba(lamda);
-    }
-
+  
+    /**
+     * Initialize the cache with 'cacheSize' and 'type'.
+     * @param cacheSize
+     * @param id
+     * @param type 
+     */
     public Cache(long cacheSize, int id, int type) {
 
         this.cacheSize = cacheSize;
@@ -113,33 +123,29 @@ public class Cache {
         eventList = new PriorityQueue(eventListCapacity, comparator);
 
         switch (this.cacheType) {
-            case 1:
+            case CacheType.FIFO:
                 fifoCache = new FIFOCache((int) cacheSize);
                 break;
-            case 2:
+            case CacheType.LRU:
                 lruCache = new LRUCache((int) cacheSize);
                 break;
-            case 3:
-                 randCache = new RandomCache(cacheSize);
-               
+            case CacheType.RANDOM:
+                randCache = new RandomCache(cacheSize);
                 break;
-            case 4:
-                arcCache = new ARC(cacheSize);
+            case CacheType.ARC:
+                arcCache = new ARCCache(cacheSize);
                 break;
-            case 5:
-                lrfu = new LRFUCacheOld((int) cacheSize);
+            case CacheType.LRFU:
+                lrfuCache = new LRFUCache((int) cacheSize);
                 break;
-            case 6:
-                LRUNUC = new LRUNonUniformCache((int) cacheSize);
+            case CacheType.LRU_NON_UNIFORM:
+                lruNonUniformCache = new LRUNonUniformCache((int) cacheSize);
                 break;
-            case 7:
-                iqiyissdcache = new SSDCache(cacheSize);
+            case CacheType.SSD:
+                ssdCache = new SSDCache(cacheSize);
                 break;
-            case 8:
-                iqiyihddcache = new HDDCache(cacheSize);
-                break;
-            case 9:
-                this.lrupCache = new LRUpCache(cacheSize);
+            case CacheType.HDD:
+                hddCache = new HDDCache(cacheSize);
                 break;
         }
         
@@ -147,130 +153,138 @@ public class Cache {
 
     }
     
-    public void setLRUpCachePvalue(double p){
-      this.lrupCache.setP(p);
-    }
-
+    
+    /**
+     * Add an object.
+     * @param object
+     * @param time
+     * @param objSize
+     * @return the evicted object if not NULL.
+     */
     public String add(String object, long time, int objSize) {
         String output = "";
         switch (this.cacheType) {
-            case 1:
+            case CacheType.FIFO:
                 output = fifoCache.add(object, time);
                 break;
-            case 2:
+            case CacheType.LRU:
                 output = this.lruCache.addLRU(object, time);
                 break;
-            case 6:
-                output = LRUNUC.add(object, time, objSize);
-                break;
-            case 3:
+            case CacheType.RANDOM:
                 output = randCache.add(object, time);
                 break;
-            case 4:
-                 output = this.arcCache.add(object, time, objSize);
-               break;
-            case 5:
-                output = this.lrfu.add(object, time);
+            case CacheType.ARC:
+                output = this.arcCache.add(object, time, objSize);
+                break;
+            case CacheType.LRFU:
+                output = this.lrfuCache.add(object, time);
                  break;
-            case 7:
-                output = iqiyissdcache.add(object, time, objSize);
+            case CacheType.LRU_NON_UNIFORM:
+                output = lruNonUniformCache.add(object, time, objSize);
                 break;
-            case 8:
-                output = iqiyihddcache.add(object, time, objSize);
+            case CacheType.SSD:
+                output = ssdCache.add(object, time, objSize);
                 break;
-            case 9:
-                output = this.lrupCache.add(object, time);
+            case CacheType.HDD:
+                output = hddCache.add(object, time, objSize);
                 break;
+        }
+       
+        if (cacheType == CacheType.SSD && ssdCache.objectSize.size() == cacheSize) {
+            cacheFull = true;
+        }
+        
+        if (cacheType == CacheType.ARC){
+            cacheFull = arcCache.checkFull(objSize);
+        }
+        
 
-        }
-       
-        if (cacheType == 7 && iqiyissdcache.objectSize.size() == cacheSize) {
+        if (!output.isEmpty() && cacheType!=CacheType.ARC) {
             cacheFull = true;
         }
-        
-        if (cacheType == 4){
-            if (arcCache.t1.curSize + arcCache.t2.curSize + objSize >= cacheSize){
-                cacheFull = true;
-            }
-        }
-        
-         if (cacheType == 9){
-            if (lrupCache.t1.curSize + lrupCache.t2.curSize + objSize >= cacheSize){
-                cacheFull = true;
-            }
-        }
-        
-        
-        if (!output.isEmpty() && cacheType!=4) {
-            cacheFull = true;
-        }
-        
-       
         
         return output;
     }
-
-    public String remove(String object, long time) {
-        String output = "";
+    
+    /**
+     * remove object from the cache.
+     * @param object
+     * 
+     */
+    public void remove(String object) {
         switch (this.cacheType) {
-            case 1:
+            case CacheType.FIFO:
                 fifoCache.remove(object);
                 break;
-            case 2:
+            case CacheType.LRU:
                 lruCache.remove(object);
                 break;
-            case 3:
+            case CacheType.RANDOM:
                 randCache.remove(object);
                 break;
-            case 6:
-                LRUNUC.remove(object);
+            case CacheType.ARC:
+                arcCache.remove(object);
                 break;
-            case 7:
-                iqiyissdcache.remove(object);
+            case CacheType.LRFU:
+                lrfuCache.remove(object);
                 break;
-            case 8:
-                iqiyihddcache.remove(object);
+            case CacheType.LRU_NON_UNIFORM:
+                lruNonUniformCache.remove(object);
                 break;
+            case CacheType.SSD:
+                ssdCache.remove(object);
+                break;
+            case CacheType.HDD:
+                hddCache.remove(object);
+                break;
+          
+            
            
         }
-        return output;
     }
 
+    /**
+     * Check if the cache contains the object.
+     * @param object
+     * @return whether the cache contains the object
+     */
     public boolean contains(String object) {
         switch (this.cacheType) {
-            case 1:
+            case CacheType.FIFO:
                 return  fifoCache.contains(object);
-            case 2:
+            case CacheType.LRU:
                 return lruCache.containsKey(object);
-            case 3:
+            case CacheType.RANDOM:
                 return randCache.contains(object);
-            case 4:
-                return arcCache.t1.objectSize.containsKey(object) || arcCache.t2.objectSize.containsKey(object);
-            case 5:
-                return this.lrfu.contains(object);
-            case 6:
-                return this.LRUNUC.objectSize.containsKey(object);
-            case 7:
-                return iqiyissdcache.objectSize.containsKey(object);
-            case 8:
-                return iqiyihddcache.objectSize.containsKey(object);
-            case 9:
-                return lrupCache.contains(object);
-        }
+            case CacheType.ARC:
+                return arcCache.contains(object);
+            case CacheType.LRFU:
+                return this.lrfuCache.contains(object);
+            case CacheType.LRU_NON_UNIFORM:
+                return lruNonUniformCache.contains(object);
+            case CacheType.SSD:
+                return ssdCache.contains(object);
+            case CacheType.HDD:
+                return hddCache.contains(object);
+                
+         }
         return false;
     }
 
    
-
-   
-
     
-    
-   
+   /**
+    * add a parent for the current cache.
+    * @param cache 
+    */
     void addParent(Cache cache) {
         this.parent = cache;
     }
 
+    /**
+     * add counts for the missing object
+     * @param objSize 
+     */
     void addMissedCount(int objSize) {
         if (!cacheFull) {
             return;
@@ -281,7 +295,11 @@ public class Cache {
             totalMissed += objSize;
         }
     }
-
+    
+    /**
+     * add totally received object
+     * @param objSize 
+     */
     void addReceivedObject(int objSize) {
         if (!cacheFull) {
             return;
@@ -294,31 +312,40 @@ public class Cache {
     }
 
    
-
+    /**
+     * batch update objects for ssd.
+     * @param evictedObjects
+     * @param evictedObjectSizes
+     * @param timestamp 
+     */
     void batchUpdateObjects(ArrayList<String> evictedObjects, ArrayList<Integer> evictedObjectSizes, long timestamp) {
-        this.iqiyissdcache.batchUpdating(evictedObjects, evictedObjectSizes, timestamp);
-        if (iqiyissdcache.objectSize.size() == iqiyissdcache.cacheSize) {
+        this.ssdCache.batchUpdating(evictedObjects, evictedObjectSizes, timestamp);
+        if (ssdCache.isFull()){
             this.cacheFull = true;
         }
+        
     }
-
+    
+    /**
+     * Compute the evicted objects from HDD.
+     */
     void calculateEvictedObjects() {
-        //System.out.print(this.toString());
-        this.iqiyihddcache.processEvictedBatchObjects();
+        this.hddCache.processEvictedBatchObjects();
     }
 
+    /**
+     * Set the frequency threshold for the batch update.
+     * @param batchFrequency 
+     */
     void setBatchFrequency(int batchFrequency) {
-        this.iqiyihddcache.setBatchFrequency(batchFrequency);
+        this.hddCache.setBatchFrequency(batchFrequency);
     }
 
-    public FIFOCache getFifoCache() {
-        return fifoCache;
-    }
-
-    public void setFifoCache(FIFOCache fifoCache) {
-        this.fifoCache = fifoCache;
-    }
-
+   
+    /**
+     * 
+     * @return cache size
+     */
     public long getCacheSize() {
         return cacheSize;
     }
@@ -368,62 +395,7 @@ public class Cache {
         this.totalMissed = totalMissed;
     }
 
-    public LRFUCacheOld getLrfu() {
-        return lrfu;
-    }
-
-    public void setLrfu(LRFUCacheOld lrfu) {
-        this.lrfu = lrfu;
-    }
-
-    public LRUCache getLruCache() {
-        return lruCache;
-    }
-
-    public void setLruCache(LRUCache lruCache) {
-        this.lruCache = lruCache;
-    }
-
-    public LRUpCache getLrupCache() {
-        return lrupCache;
-    }
-
-    public void setLrupCache(LRUpCache lrupCache) {
-        this.lrupCache = lrupCache;
-    }
-
-    public ARC getArcCache() {
-        return arcCache;
-    }
-
-    public void setArcCache(ARC arcCache) {
-        this.arcCache = arcCache;
-    }
-
-    public LRUNonUniformCache getLRUNUC() {
-        return LRUNUC;
-    }
-
-    public void setLRUNUC(LRUNonUniformCache LRUNUC) {
-        this.LRUNUC = LRUNUC;
-    }
-
-    public SSDCache getIqiyissdcache() {
-        return iqiyissdcache;
-    }
-
-    public void setIqiyissdcache(SSDCache iqiyissdcache) {
-        this.iqiyissdcache = iqiyissdcache;
-    }
-
-    public HDDCache getIqiyihddcache() {
-        return iqiyihddcache;
-    }
-
-    public void setIqiyihddcache(HDDCache iqiyihddcache) {
-        this.iqiyihddcache = iqiyihddcache;
-    }
-
+   
     public ArrayList<Cache> getChildren() {
         return children;
     }
@@ -432,28 +404,13 @@ public class Cache {
         this.children = children;
     }
 
-    public RandomCache getRandCache() {
-        return randCache;
-    }
-
-    public void setRandCache(RandomCache randCache) {
-        this.randCache = randCache;
-    }
-
+   
     public PriorityQueue<ReferencePattern> getEventList() {
         return eventList;
     }
 
     public void setEventList(PriorityQueue<ReferencePattern> eventList) {
         this.eventList = eventList;
-    }
-
-    public int getP() {
-        return p;
-    }
-
-    public void setP(int p) {
-        this.p = p;
     }
 
     public int getMissRatioOption() {
@@ -473,9 +430,4 @@ public class Cache {
     }
 
    
-
-   
-
-   
-
 }

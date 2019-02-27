@@ -1,3 +1,8 @@
+package caches;
+
+
+import caches.LRUNonUniformCache;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -8,12 +13,12 @@
  *
  * @author JIANGWEI
  */
-public class ARC {
+public class ARCCache {
       LRUNonUniformCache t1, t2;
     LRUNonUniformCache b1, b2;
     long cacheSize;
     int p=0;
-    ARC(long cacheSize) {
+    public ARCCache(long cacheSize) {
         this.cacheSize = cacheSize;
        t1 = new LRUNonUniformCache((int) cacheSize);
                 t2 = new LRUNonUniformCache((int) cacheSize);
@@ -63,7 +68,7 @@ public class ARC {
           
    }
 
-    String add(String object, long time, int objSize) {
+    public String add(String object, long time, int objSize) {
         String output = "";
         
                 if (this.t1.objectSize.containsKey(object)) {
@@ -119,5 +124,19 @@ public class ARC {
                     }
                 }
                 return output;}
+
+    public void remove(String object) {
+        t1.remove(object);
+        t2.remove(object);
+    }
+
+    public boolean checkFull(int objSize) {
+        return t1.curSize + t2.curSize + objSize >= cacheSize;
+    }
+
+    public boolean contains(String object) {
+                    return t1.objectSize.containsKey(object) || t2.objectSize.containsKey(object);
+            
+    }
             
 }

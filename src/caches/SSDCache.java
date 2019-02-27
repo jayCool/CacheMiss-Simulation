@@ -1,3 +1,5 @@
+package caches;
+
 
 
 import java.util.ArrayList;
@@ -16,7 +18,7 @@ import java.util.Queue;
  *
  * @author Zhang-Jiangwei
  */
-class SSDCache extends LinkedHashMap<String, Long> {
+public class SSDCache extends LinkedHashMap<String, Long> {
 
     public HashMap<String, Double> objectSize = new HashMap<String, Double>();
     double cacheSize = 0;
@@ -112,6 +114,17 @@ class SSDCache extends LinkedHashMap<String, Long> {
             int size = sizes.get(i);
             addForBatchUpdating(object, timestamp, size);
         }
+    }
+
+    public boolean contains(String object) {
+        return objectSize.containsKey(object);
+    }
+
+    public boolean isFull() {
+    if (objectSize.size() == cacheSize) {
+           return true;
+        }
+    return false;
     }
 
 }

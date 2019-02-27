@@ -1,3 +1,5 @@
+package caches;
+
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -15,7 +17,7 @@ public class FIFOCache {
     Queue fifoqueue = new LinkedList<String>();
     long cacheSize;
 
-    FIFOCache(int cachesize) {
+    public FIFOCache(int cachesize) {
         this.cacheSize = cacheSize;
     }
     
@@ -35,11 +37,11 @@ public class FIFOCache {
         return result;
     }
 
-    boolean contains(String object) {
+    public boolean contains(String object) {
     return this.fifoqueue.contains(object);
             }
 
-    void remove(String object) {
+    public void remove(String object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

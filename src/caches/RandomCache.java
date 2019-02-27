@@ -1,3 +1,5 @@
+package caches;
+
 
 import java.util.HashSet;
 import java.util.Random;
@@ -17,7 +19,7 @@ public class RandomCache {
     String[] randomKeys;
       HashSet<String> randomCache = new HashSet<>();
     int cacheSize=0;
-    RandomCache(long cacheSize) {
+    public RandomCache(long cacheSize) {
         this.cacheSize = (int) cacheSize;
         randomKeys = new String[(int) this.cacheSize];
                 for (int i = 0; i < randomKeys.length; i++) {
@@ -45,10 +47,10 @@ public class RandomCache {
         return result;
     }
 
-    boolean contains(String object) {
+    public boolean contains(String object) {
     return this.randomCache.contains(object);}
 
-    void remove(String object) {
+    public void remove(String object) {
         randomCache.remove(object);
 
         int index = 0;
