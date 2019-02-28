@@ -11,12 +11,16 @@ package caches.implementations;
  * @author Zhang-Jiangwei
  */
 public class CacheObject {
-    String key;
+    public String object;
     public long timestamp;
+    public int objectSize;
+    CacheObject prev;
+    CacheObject next;
 
-    public CacheObject(String key, long time) {
-        this.key = key;
+    public CacheObject(String object, long time, int objectSize) {
+        this.object = object;
         this.timestamp = time;
+        this.objectSize = objectSize;
     }
     
     
@@ -24,7 +28,7 @@ public class CacheObject {
     public boolean equals(Object obj) {
         if (obj instanceof CacheObject){
             CacheObject cacheObject = (CacheObject) obj;
-            return this.key.equals(cacheObject.key);
+            return this.object.equals(cacheObject.object);
         } 
         return false;
     }
@@ -32,7 +36,7 @@ public class CacheObject {
 
     @Override
     public String toString() {
-        return "key: " + key + "; time: " + timestamp;
+        return "key: " + object + "; time: " + timestamp;
     }
 
 }

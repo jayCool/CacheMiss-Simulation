@@ -6,8 +6,14 @@ package caches;
  * and open the template in the editor.
  */
 
-import caches.Cache;
+
 import caches.implementations.ARCCache;
+import caches.implementations.FIFOCache;
+import caches.implementations.HDDCache;
+import caches.implementations.LRFUCache;
+import caches.implementations.LRUCache;
+import caches.implementations.RandomCache;
+import caches.implementations.SSDCache;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -384,11 +390,11 @@ public class Simulator {
 
                 JSONObject client = (JSONObject) object;
                 int id = Integer.parseInt((String) client.get("id"));
-                long cacheSize = Long.parseLong((String) client.get("cacheSize"));
+                int cacheSize = Integer.parseInt((String) client.get("cacheSize"));
                 int cacheType = Integer.parseInt((String) client.get("cacheType"));
 
-                Cache newCache = new ARCCache(cacheSize, id, cacheType);
-
+                Cache newCache = initializeCache(cacheSize, id, cacheType);
+                
                 if (cacheType == CacheType.HDD) {
                     newCache.setBatchFrequency(this.batchFrequency);
                     hddCaches.add(newCache);
@@ -479,5 +485,28 @@ public class Simulator {
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Simulator.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    private Cache initializeCache(int cacheSize, int id, int cacheType) {
+        switch (cacheType) {
+            case CacheType.ARC:
+                return new ARCCache(cacheSize, id, cacheType);
+            case CacheType.FIFO:
+                return new FIFOCache(cacheSize, id, cacheType);
+            case CacheType.HDD:
+                return new HDDCache(cacheSize, id, cacheType);
+            case CacheType.LRFU:
+                return new LRFUCache(cacheSize, id, cacheType);
+            case CacheType.LRU:
+                return new LRUCache(cacheSize, id, cacheType);
+            case CacheType.RANDOM:
+                return new RandomCache(cacheSize, id, cacheType);
+            case CacheType.SSD:
+                return new SSDCache(cacheSize, id, cacheType);
+        }
+        System.out.println("Invalid Cache Type Define!!!");
+        System.exit(-1);
+        
+        return null;
     }
 }

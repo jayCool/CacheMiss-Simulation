@@ -1,5 +1,6 @@
-package caches;
+package caches.implementations;
 
+import caches.Cache;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -13,16 +14,17 @@ import java.util.Queue;
  *
  * @author JIANGWEI
  */
-public class FIFOCache {
+public class FIFOCache extends Cache{
     Queue fifoqueue = new LinkedList<String>();
     long cacheSize;
 
-    public FIFOCache(int cachesize) {
+    public FIFOCache(int cacheSize, int id, int type) {
+        super(cacheSize, id, type);
         this.cacheSize = cacheSize;
     }
     
     public String add(String element, long time) {
-        String result = "";
+        String result;
         if (fifoqueue.contains(element)) {
             return "";
         }
@@ -34,19 +36,36 @@ public class FIFOCache {
 
         result = (String) fifoqueue.poll();
         fifoqueue.offer(element);
-        return result;
+        return result + " 1";
     }
 
+    @Override
     public boolean contains(String object) {
     return this.fifoqueue.contains(object);
-            }
+    }
 
+    @Override
     public void remove(String object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.removeFIFO(object);
     }
     
     public void removeFIFO(String object) {
         this.fifoqueue.remove(object);
+    }
+
+    @Override
+    public String toString() {
+        return "cacheSize: " + this.cacheSize + "   contentSize: " + fifoqueue.size();
+    }
+
+    @Override
+    public String add(String object, long time, int objSize) {
+        return this.add(object, time);
+    }
+
+    @Override
+    public boolean isCacheFull() {
+        return fifoqueue.size() >= cacheSize;
     }
 
     

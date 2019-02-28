@@ -8,8 +8,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.simple.JSONArray;
@@ -187,7 +185,7 @@ public class WorkloadGenerator {
             }
             pw.close();
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(RequestGenerator.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(WorkloadGenerator.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

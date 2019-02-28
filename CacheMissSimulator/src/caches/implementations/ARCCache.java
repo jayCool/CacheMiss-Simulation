@@ -13,105 +13,97 @@ import caches.Cache;
  */
 public class ARCCache extends Cache {
 
-    LRUNonUniformCache t1, t2;
-    LRUNonUniformCache b1, b2;
+    LRUCache t1;
+    LRUCache t2;
+    LRUCache b1;
+    LRUCache b2;
     int p = 0;
 
-    public ARCCache(long cacheSize, int id, int type) {
+    public ARCCache(int cacheSize, int id, int type) {
         super(cacheSize, id, type);
-        t1 = new LRUNonUniformCache(cacheSize, id, type);
-        t2 = new LRUNonUniformCache(cacheSize, id, type);
-        b1 = new LRUNonUniformCache(cacheSize, id, type);
-        b2 = new LRUNonUniformCache(cacheSize, id, type);
+        t1 = new LRUCache(cacheSize, id, type);
+        t2 = new LRUCache(cacheSize, id, type);
+        b1 = new LRUCache(cacheSize, id, type);
+        b2 = new LRUCache(cacheSize, id, type);
     }
 
     /**
-     * 
+     *
      * @param b1
      * @param b2
      * @return delta in ARC
      */
-    private int calDelta(LRUNonUniformCache b1, LRUNonUniformCache b2) {
-        if (b1.objectSize.size() >= b2.objectSize.size()) {
+    private int calDelta(LRUCache b1, LRUCache b2) {
+        if (b1.getContentSize() >= b2.getContentSize()) {
             return 1;
         }
-        return (int) (b2.objectSize.size() / b1.objectSize.size());
+        return (int) Math.round(1.0 * b2.getContentSize() / b1.getContentSize());
     }
 
     private String replace(String object, int p, long time, int objSize) {
         String out = "";
-        if ((!t1.objectSize.isEmpty()) && (t1.curSize > p || (b2.objectSize.containsKey(object) && t1.curSize == p))) {
+        if ((!t1.isEmpty()) && (t1.currentContentSize > p || (b2.contains(object) && t1.currentContentSize == p))) {
 
             String old = t1.removeOldest();
 
-            b1.add(old, time, objSize);
-            while (t1.curSize + t2.curSize + objSize > this.getCacheSize() && !t1.objectSize.isEmpty()) {
+            b1.add(old, time, 1);
+            while (t1.currentContentSize + t2.currentContentSize + objSize > this.getCacheSize() && !t1.isEmpty()) {
                 old = t1.removeOldest();
-
-                b1.add(old, time, objSize);
+                b1.add(old, time, 1);
             }
-            //     System.out.println("here");
             out = old;
-        } else if (!t2.objectSize.isEmpty()) {
+        } else if (!t2.isEmpty()) {
             String old = t2.removeOldest();
-            b2.add(old, time, objSize);
+            b2.add(old, time, 1);
 
-            while (t1.curSize + t2.curSize + objSize > this.getCacheSize() && !t2.objectSize.isEmpty()) {
+            while (t1.currentContentSize + t2.currentContentSize + objSize > this.getCacheSize() && !t2.isEmpty()) {
                 old = t2.removeOldest();
-
-                b2.add(old, time, objSize);
+                b2.add(old, time, 1);
             }
-            //    System.out.println("there");
             out = old;
         }
         return out;
     }
 
+    @Override
     public String toString() {
-
         return "ARC-Cache: t1: " + this.t1.toString() + " t2: " + t2.toString() + "b1: " + b1.toString() + "b2: " + b2.toString();
-
     }
 
+    @Override
     public String add(String object, long time, int objSize) {
         String output = "";
 
-        if (this.t1.objectSize.containsKey(object)) {
-            //   System.err.println("branch1");
+        if (this.t1.contains(object)) {
             this.t1.remove(object);
             this.t2.add(object, time, objSize);
-        } else if (this.t2.objectSize.containsKey(object)) {
-            //    System.err.println("branch2");
+        } else if (this.t2.contains(object)) {
             this.t2.remove(object);
             this.t2.add(object, time, objSize);
-            //System.out.println(output);
-        } else if (b1.objectSize.containsKey(object)) {
-            //   System.err.println("branch3");
+        } else if (b1.contains(object)) {
             int d = calDelta(b1, b2);
             p = Math.min(p + d, (int) this.getCacheSize());
             replace(object, p, time, objSize);
             b1.remove(object);
             t2.add(object, time, objSize);
-        } else if (b2.objectSize.containsKey(object)) {
-            //    System.err.println("branch4");
+        } else if (b2.contains(object)) {
             int d = calDelta(b2, b1);
             p = Math.max(p - d, 0);
             replace(object, p, time, objSize);
             b2.remove(object);
             t2.add(object, time, objSize);
         } else {
-
-            if (this.t1.curSize + b1.objectSize.size() >= this.getCacheSize()) {
-                if (t1.curSize < this.getCacheSize()) {
+            if (this.t1.currentContentSize + b1.currentContentSize >= this.getCacheSize()) {
+                if (t1.currentContentSize < this.getCacheSize()) {
                     b1.removeOldest();
                     output = replace(object, p, time, objSize);
                 } else {
                     t1.removeOldest();
                 }
-            } else if (this.t1.curSize + b1.objectSize.size() < this.getCacheSize()) {
-                if (t1.curSize + t2.curSize + b1.objectSize.size() + b2.objectSize.size() + objSize >= this.getCacheSize()) {
-                    if (t1.curSize + t2.curSize + b1.objectSize.size() + b2.objectSize.size() + objSize >= 2 * this.getCacheSize()) {
-                        if (!b2.objectSize.isEmpty()) {
+            } else if (this.t1.currentContentSize + b1.currentContentSize < this.getCacheSize()) {
+                if (t1.currentContentSize + t2.currentContentSize + b1.currentContentSize + b2.currentContentSize + objSize >= this.getCacheSize()) {
+                    if (t1.currentContentSize + t2.currentContentSize + b1.currentContentSize + b2.currentContentSize + objSize >= 2 * this.getCacheSize()) {
+                        if (!b2.isEmpty()) {
                             b2.removeOldest();
                         }
                     }
@@ -120,7 +112,6 @@ public class ARCCache extends Cache {
             }
 
             String temp = t1.add(object, time, objSize);
-            //System.err.println("return: " + temp + "\n");
             if (!"".equals(output)) {
                 output = temp;
             }
@@ -135,18 +126,18 @@ public class ARCCache extends Cache {
     }
 
     public boolean checkFull(int objSize) {
-        return t1.curSize + t2.curSize + objSize >= this.getCacheSize();
+        return t1.currentContentSize + t2.currentContentSize + objSize >= this.getCacheSize();
     }
 
     @Override
     public boolean contains(String object) {
-        return t1.objectSize.containsKey(object) || t2.objectSize.containsKey(object);
+        return t1.contains(object) || t2.contains(object);
 
     }
 
     @Override
     public boolean isCacheFull() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return checkFull(0);
     }
 
 }

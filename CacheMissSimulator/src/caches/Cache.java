@@ -8,12 +8,11 @@ package caches;
 
 import caches.implementations.ARCCache;
 import caches.implementations.SSDCache;
-import caches.FIFOCache;
-import caches.implementations.LRUNonUniformCache;
-import caches.HDDCache;
-import caches.LRUCache;
-import caches.LRFUCache;
-import caches.RandomCache;
+import caches.implementations.FIFOCache;
+import caches.implementations.HDDCache;
+import caches.implementations.LRUCache;
+import caches.implementations.LRFUCache;
+import caches.implementations.RandomCache;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.PriorityQueue;
@@ -26,7 +25,7 @@ import java.util.PriorityQueue;
 public abstract class Cache {
    
    
-    long cacheSize;
+    int cacheSize;
     int cacheID;
     int cacheType; // 1 FIFO, 2 LRU, 3 RANDOM, 4 ARCCache, 7, SSD, 8 HDD
     int cacheStrategy = 1; //1 LCE, 2 LCD, 3 MCD
@@ -38,7 +37,7 @@ public abstract class Cache {
     LRFUCache lrfuCache;
     LRUCache lruCache;
     ARCCache arcCache;
-    LRUNonUniformCache lruNonUniformCache;
+    LRUCache lruNonUniformCache;
     SSDCache ssdCache;
     HDDCache hddCache;
     FIFOCache fifoCache;
@@ -99,7 +98,7 @@ public abstract class Cache {
      * @param id
      * @param type 
      */
-    public Cache(long cacheSize, int id, int type) {
+    public Cache(int cacheSize, int id, int type) {
 
         this.cacheSize = cacheSize;
         this.cacheID = id;
@@ -108,93 +107,15 @@ public abstract class Cache {
         int eventListCapacity = Math.min(8000000, (int) cacheSize);
         eventList = new PriorityQueue(eventListCapacity, comparator);
     }
-    /*
-        switch (this.cacheType) {
-            case CacheType.FIFO:
-                fifoCache = new FIFOCache((int) cacheSize);
-                break;
-            case CacheType.LRU:
-                lruCache = new LRUCache((int) cacheSize);
-                break;
-            case CacheType.RANDOM:
-                randCache = new RandomCache(cacheSize);
-                break;
-            case CacheType.ARC:
-                arcCache = new ARCCache(cacheSize);
-                break;
-            case CacheType.LRFU:
-                lrfuCache = new LRFUCache((int) cacheSize);
-                break;
-            case CacheType.LRU_NON_UNIFORM:
-                lruNonUniformCache = new LRUNonUniformCache((int) cacheSize);
-                break;
-            case CacheType.SSD:
-                ssdCache = new SSDCache(cacheSize);
-                break;
-            case CacheType.HDD:
-                hddCache = new HDDCache(cacheSize);
-                break;
-        }
-        
-        
 
-    }
-    */
     
     /**
-     * Add an object.
+     * 
      * @param object
      * @param time
      * @param objSize
-     * @return the evicted object if not NULL.
+     * @return object<space>objectSize 
      */
-    /*
-    public String add(String object, long time, int objSize) {
-        String output = "";
-        switch (this.cacheType) {
-            case CacheType.FIFO:
-                output = fifoCache.add(object, time);
-                break;
-            case CacheType.LRU:
-                output = this.lruCache.addLRU(object, time);
-                break;
-            case CacheType.RANDOM:
-                output = randCache.add(object, time);
-                break;
-            case CacheType.ARC:
-                output = this.arcCache.add(object, time, objSize);
-                break;
-            case CacheType.LRFU:
-                output = this.lrfuCache.add(object, time);
-                 break;
-            case CacheType.LRU_NON_UNIFORM:
-                output = lruNonUniformCache.add(object, time, objSize);
-                break;
-            case CacheType.SSD:
-                output = ssdCache.add(object, time, objSize);
-                break;
-            case CacheType.HDD:
-                output = hddCache.add(object, time, objSize);
-                break;
-        }
-       
-        if (cacheType == CacheType.SSD && ssdCache.objectSize.size() == cacheSize) {
-            cacheFull = true;
-        }
-        
-        if (cacheType == CacheType.ARC){
-            cacheFull = arcCache.checkFull(objSize);
-        }
-        
-
-        if (!output.isEmpty() && cacheType!=CacheType.ARC) {
-            cacheFull = true;
-        }
-        
-        return output;
-    }
-    */
-    
     abstract public String add(String object, long time, int objSize);
     
     /**
@@ -203,67 +124,9 @@ public abstract class Cache {
      * 
      */
     abstract public void remove(String object);
-    /*{
-        switch (this.cacheType) {
-            case CacheType.FIFO:
-                fifoCache.remove(object);
-                break;
-            case CacheType.LRU:
-                lruCache.remove(object);
-                break;
-            case CacheType.RANDOM:
-                randCache.remove(object);
-                break;
-            case CacheType.ARC:
-                arcCache.remove(object);
-                break;
-            case CacheType.LRFU:
-                lrfuCache.remove(object);
-                break;
-            case CacheType.LRU_NON_UNIFORM:
-                lruNonUniformCache.remove(object);
-                break;
-            case CacheType.SSD:
-                ssdCache.remove(object);
-                break;
-            case CacheType.HDD:
-                hddCache.remove(object);
-                break;
-          }
-    }
-*/
-    abstract public boolean contains(String object);
-    /**
-     * Check if the cache contains the object.
-     * @param object
-     * @return whether the cache contains the object
-     */
-    /*
-    
-    public boolean contains(String object) {
-        switch (this.cacheType) {
-            case CacheType.FIFO:
-                return  fifoCache.contains(object);
-            case CacheType.LRU:
-                return lruCache.containsKey(object);
-            case CacheType.RANDOM:
-                return randCache.contains(object);
-            case CacheType.ARC:
-                return arcCache.contains(object);
-            case CacheType.LRFU:
-                return this.lrfuCache.contains(object);
-            case CacheType.LRU_NON_UNIFORM:
-                return lruNonUniformCache.contains(object);
-            case CacheType.SSD:
-                return ssdCache.contains(object);
-            case CacheType.HDD:
-                return hddCache.contains(object);
-                
-         }
-        return false;
-    }
-*/
    
+    abstract public boolean contains(String object);
+  
     
    /**
     * add a parent for the current cache.
@@ -336,7 +199,7 @@ public abstract class Cache {
         return cacheSize;
     }
 
-    public void setCacheSize(long cacheSize) {
+    public void setCacheSize(int cacheSize) {
         this.cacheSize = cacheSize;
     }
 
