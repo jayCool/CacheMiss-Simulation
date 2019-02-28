@@ -1,9 +1,10 @@
-package caches;
+package caches.implementations;
 
 
+import caches.Cache;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+
 import java.util.PriorityQueue;
 import java.util.Queue;
 
@@ -16,22 +17,20 @@ import java.util.Queue;
  *
  * @author Zhang-Jiangwei
  */
-public class LRUNonUniformCache extends LinkedHashMap<String, Long> {
+public class LRUNonUniformCache extends Cache{
 
     HashMap<String, Integer> objectSize = new HashMap<String, Integer>();
-    double cacheSize=0;
     double curSize=0;
     Queue<CacheObject> objectPQ;
-    int initialSize = 1000;
-    public LRUNonUniformCache(int cacheSize){
-        this.cacheSize = cacheSize;
-        objectPQ = new PriorityQueue<>(cacheSize, objectComparator);
+    
+    public LRUNonUniformCache(long cacheSize, int id, int type ){
+        super(cacheSize, id, type);
+        objectPQ = new PriorityQueue<>((int)cacheSize, objectComparator);
     }
 
     @Override
     public String toString() {
-        //return "LRUNonUniformCache{" + "objectSize=" + objectSize + ", cacheSize=" + cacheSize + ", curSize=" + curSize + ", objectPQ=" + objectPQ + ", initialSize=" + initialSize + '}';
-        return "" + curSize;
+        return "LRU_Non_Uniform_Cache:" + curSize;
     }
     
     
@@ -43,15 +42,11 @@ public class LRUNonUniformCache extends LinkedHashMap<String, Long> {
         }
     };
     
-    public String removeOldest(){
-         String tempkey = this.objectPQ.poll().key;
-            int tempSize = objectSize.get(tempkey);
-            objectSize.remove(tempkey);
-            curSize -= tempSize;
-            return tempkey;
-    }
-    public String add(String key, Long time, int size){
-        if (size > cacheSize){
+    
+
+    @Override
+    public String add(String key, long time, int size){
+        if (size > this.getCacheSize()){
             return key + " " + size;
         }
         String result = "";
@@ -63,10 +58,7 @@ public class LRUNonUniformCache extends LinkedHashMap<String, Long> {
             curSize -= oldSize;
         }
          
-        while (size + curSize > cacheSize){
-            if (this.objectPQ.size()==0){
-                System.err.println("objectSize: " + objectSize.size() + " " + cacheSize + " " + curSize + " " + size);
-            }
+        while (size + curSize > this.getCacheSize()){
             String tempkey = this.objectPQ.poll().key;
             int tempSize = objectSize.get(tempkey);
             objectSize.remove(tempkey);
@@ -74,8 +66,6 @@ public class LRUNonUniformCache extends LinkedHashMap<String, Long> {
             curSize -= tempSize;
         }
         
-        
-       
         objectPQ.add(newObj);
         objectSize.put(key, size);
         curSize += size;
@@ -83,6 +73,19 @@ public class LRUNonUniformCache extends LinkedHashMap<String, Long> {
         return result;
     }
     
+    /**
+     * 
+     * @return oldest object
+     */
+    public String removeOldest(){
+         String tempkey = this.objectPQ.poll().key;
+            int tempSize = objectSize.get(tempkey);
+            objectSize.remove(tempkey);
+            curSize -= tempSize;
+            return tempkey;
+    }
+    
+    @Override
     public void remove(String key){
         CacheObject temp;
         if (objectSize.containsKey(key)){
@@ -93,8 +96,16 @@ public class LRUNonUniformCache extends LinkedHashMap<String, Long> {
         }
     }
 
+    @Override
     public boolean contains(String object) {
         return this.objectSize.containsKey(object);
+    }
+
+
+
+    @Override
+    public boolean isCacheFull() {
+        return curSize >= this.getCacheSize();
     }
     
     

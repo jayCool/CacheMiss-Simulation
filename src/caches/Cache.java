@@ -1,13 +1,15 @@
+package caches;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 
-import caches.ARCCache;
-import caches.SSDCache;
+import caches.implementations.ARCCache;
+import caches.implementations.SSDCache;
 import caches.FIFOCache;
-import caches.LRUNonUniformCache;
+import caches.implementations.LRUNonUniformCache;
 import caches.HDDCache;
 import caches.LRUCache;
 import caches.LRFUCache;
@@ -21,7 +23,7 @@ import java.util.PriorityQueue;
  * @author Zhang Jiangwei
  */
 
-public class Cache {
+public abstract class Cache {
    
    
     long cacheSize;
@@ -31,7 +33,7 @@ public class Cache {
     double totalReceived = 0;
     double totalMissed = 0;
     int missRatioOption = 0; // 0 for by request, 1 by object size
-    boolean cacheFull = false;
+    //boolean cacheFull = false;
     
     LRFUCache lrfuCache;
     LRUCache lruCache;
@@ -40,15 +42,18 @@ public class Cache {
     SSDCache ssdCache;
     HDDCache hddCache;
     FIFOCache fifoCache;
-   
+    private RandomCache randCache;
+    
     private ArrayList<Cache> children = new ArrayList<>();
     public Cache parent;
-    private RandomCache randCache;
     PriorityQueue<ReferencePattern> eventList;
     
    
-    
-    public Cache getParent() {
+    /**
+     * Get Parent Cache
+     * @return parent cache
+     */
+    Cache getParent() {
         return parent;
     }
    
@@ -68,28 +73,9 @@ public class Cache {
      * 
      * @return String representation of the cache.
      */
-    @Override
-    public String toString() {
-        switch (this.cacheType) {
-            case CacheType.FIFO:
-                return "FIFO Cache: " + fifoCache.toString();
-            case CacheType.LRU:
-                return "LRU Cache: " + lruCache.keySet();
-            case CacheType.RANDOM:
-                return "RANDOM Cache: " + randCache.toString();
-            case CacheType.ARC:
-                return "ARC Cache: " + arcCache.toString();
-            case CacheType.LRFU:
-                return "LRFU Cache: " + lrfuCache.toString().trim();
-            case CacheType.LRU_NON_UNIFORM:
-                return "LRU_NON_UNIFORM Cache: " + lruNonUniformCache.size();
-            case CacheType.SSD:
-                return "SSD Cache: " + ssdCache.toString();
-            case CacheType.HDD:
-                return "HDD Cache: " + hddCache.toString();
-        }
-        return "something interesting!!!!";
-    }
+    
+    abstract public String toString();
+    
 
     /**
      * 
@@ -121,7 +107,8 @@ public class Cache {
         Comparator<ReferencePattern> comparator = new ReferenceComparator();
         int eventListCapacity = Math.min(8000000, (int) cacheSize);
         eventList = new PriorityQueue(eventListCapacity, comparator);
-
+    }
+    /*
         switch (this.cacheType) {
             case CacheType.FIFO:
                 fifoCache = new FIFOCache((int) cacheSize);
@@ -152,7 +139,7 @@ public class Cache {
         
 
     }
-    
+    */
     
     /**
      * Add an object.
@@ -161,6 +148,7 @@ public class Cache {
      * @param objSize
      * @return the evicted object if not NULL.
      */
+    /*
     public String add(String object, long time, int objSize) {
         String output = "";
         switch (this.cacheType) {
@@ -205,13 +193,17 @@ public class Cache {
         
         return output;
     }
+    */
+    
+    abstract public String add(String object, long time, int objSize);
     
     /**
      * remove object from the cache.
      * @param object
      * 
      */
-    public void remove(String object) {
+    abstract public void remove(String object);
+    /*{
         switch (this.cacheType) {
             case CacheType.FIFO:
                 fifoCache.remove(object);
@@ -237,17 +229,17 @@ public class Cache {
             case CacheType.HDD:
                 hddCache.remove(object);
                 break;
-          
-            
-           
-        }
+          }
     }
-
+*/
+    abstract public boolean contains(String object);
     /**
      * Check if the cache contains the object.
      * @param object
      * @return whether the cache contains the object
      */
+    /*
+    
     public boolean contains(String object) {
         switch (this.cacheType) {
             case CacheType.FIFO:
@@ -270,7 +262,7 @@ public class Cache {
          }
         return false;
     }
-
+*/
    
     
    /**
@@ -286,9 +278,7 @@ public class Cache {
      * @param objSize 
      */
     void addMissedCount(int objSize) {
-        if (!cacheFull) {
-            return;
-        }
+      
         if (this.missRatioOption == 0) {
             totalMissed += 1;
         } else {
@@ -301,9 +291,7 @@ public class Cache {
      * @param objSize 
      */
     void addReceivedObject(int objSize) {
-        if (!cacheFull) {
-            return;
-        }
+       
         if (this.missRatioOption == 0) {
             totalReceived += 1;
         } else {
@@ -320,9 +308,7 @@ public class Cache {
      */
     void batchUpdateObjects(ArrayList<String> evictedObjects, ArrayList<Integer> evictedObjectSizes, long timestamp) {
         this.ssdCache.batchUpdating(evictedObjects, evictedObjectSizes, timestamp);
-        if (ssdCache.isFull()){
-            this.cacheFull = true;
-        }
+       
         
     }
     
@@ -421,13 +407,14 @@ public class Cache {
         this.missRatioOption = missRatioOption;
     }
 
+    /*
     public boolean isCacheFull() {
         return cacheFull;
     }
-
-    public void setCacheFull(boolean cacheFull) {
-        this.cacheFull = cacheFull;
-    }
+    */
+    abstract public boolean isCacheFull();
+    
+   
 
    
 }

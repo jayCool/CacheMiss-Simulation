@@ -1,6 +1,7 @@
 package caches;
 
 
+import caches.implementations.CacheObject;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;

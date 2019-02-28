@@ -1,9 +1,13 @@
+package caches;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 
+import caches.Cache;
+import caches.implementations.ARCCache;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -383,7 +387,7 @@ public class Simulator {
                 long cacheSize = Long.parseLong((String) client.get("cacheSize"));
                 int cacheType = Integer.parseInt((String) client.get("cacheType"));
 
-                Cache newCache = new Cache(cacheSize, id, cacheType);
+                Cache newCache = new ARCCache(cacheSize, id, cacheType);
 
                 if (cacheType == CacheType.HDD) {
                     newCache.setBatchFrequency(this.batchFrequency);
@@ -471,7 +475,7 @@ public class Simulator {
                 }
             }
             scanner.close();
-            newCache.setCacheFull(true);
+            //newCache.setCacheFull(true);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Simulator.class.getName()).log(Level.SEVERE, null, ex);
         }

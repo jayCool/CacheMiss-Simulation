@@ -1,4 +1,4 @@
-package caches;
+package caches.implementations;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -12,9 +12,9 @@ package caches;
  */
 public class CacheObject {
     String key;
-    long timestamp;
+    public long timestamp;
 
-    CacheObject(String key, long time) {
+    public CacheObject(String key, long time) {
         this.key = key;
         this.timestamp = time;
     }

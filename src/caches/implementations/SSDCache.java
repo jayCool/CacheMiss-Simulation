@@ -1,7 +1,9 @@
-package caches;
+package caches.implementations;
 
 
 
+import caches.Cache;
+import caches.implementations.CacheObject;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -18,16 +20,15 @@ import java.util.Queue;
  *
  * @author Zhang-Jiangwei
  */
-public class SSDCache extends LinkedHashMap<String, Long> {
+public class SSDCache extends Cache {
 
     public HashMap<String, Double> objectSize = new HashMap<String, Double>();
-    double cacheSize = 0;
     double curSize = 0;
     Queue<CacheObject> objectPQ;
     int initialSize = 1000;
 
-    public SSDCache(long cacheSize) {
-        this.cacheSize = cacheSize;
+    public SSDCache(long cacheSize, int id, int type) {
+         super(cacheSize, id, type);
         int queueCapacity = Math.min(8000000, (int)cacheSize);
         objectPQ = new PriorityQueue<>(queueCapacity, objectComparator);
     }
@@ -44,9 +45,9 @@ public class SSDCache extends LinkedHashMap<String, Long> {
         return objectSize.toString();
     }
 
-    public String add(String key, Long time, int sizeInt) {
+    public String add(String key, long time, int sizeInt) {
         double size = 1.0 * sizeInt;
-        if (size > cacheSize) {
+        if (size > this.getCacheSize()) {
             return key + " " + size;
         }
         String result = key + " " + size;
@@ -66,7 +67,7 @@ public class SSDCache extends LinkedHashMap<String, Long> {
 
     public String addForBatchUpdating(String key, Long time, int sizeInt) {
         double size = 1.0 * sizeInt;
-        if (size > cacheSize) {
+        if (size > getCacheSize()) {
             return key + " " + size;
         }
         String result = "";
@@ -78,10 +79,8 @@ public class SSDCache extends LinkedHashMap<String, Long> {
             curSize -= oldSize;
         }
 
-        while (size + curSize > cacheSize) {
-            if (this.objectPQ.size() == 0) {
-                System.err.println("objectSize: " + objectSize.size() + " " + cacheSize + " " + curSize + " " + size);
-            }
+        while (size + curSize > getCacheSize()) {
+           
             String tempkey = this.objectPQ.poll().key;
             double tempSize = objectSize.get(tempkey);
             objectSize.remove(tempkey);
@@ -120,11 +119,9 @@ public class SSDCache extends LinkedHashMap<String, Long> {
         return objectSize.containsKey(object);
     }
 
-    public boolean isFull() {
-    if (objectSize.size() == cacheSize) {
-           return true;
-        }
-    return false;
+    @Override
+    public boolean isCacheFull() {
+        return objectSize.size() == this.getCacheSize();
     }
 
 }

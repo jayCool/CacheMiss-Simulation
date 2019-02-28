@@ -3,15 +3,21 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulation/src/Cache.java</file>
-            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulation/src/RandomCache.java</file>
-            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulation/src/CacheType.java</file>
-            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulation/src/LRUCache.java</file>
-            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulation/src/FIFOCache.java</file>
-            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulation/src/CacheObject.java</file>
-            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulation/src/LRFUCacheOld.java</file>
-            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulation/src/Simulator.java</file>
-            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulation/src/ARC.java</file>
+            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulation/src/caches/CacheStrategy.java</file>
+            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulation/src/caches/LFUCache.java</file>
+            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulation/src/caches/CacheType.java</file>
+            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulation/src/caches/implementations/SSDCache.java</file>
+            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulation/src/caches/FIFOCache.java</file>
+            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulation/src/caches/implementations/ARCCache.java</file>
+            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulation/src/caches/LRFUCache.java</file>
+            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulation/src/caches/Cache.java</file>
+            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulation/src/caches/RandomCache.java</file>
+            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulation/src/caches/CacheStatus.java</file>
+            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulation/src/caches/implementations/LRUNonUniformCache.java</file>
+            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulation/src/caches/HDDCache.java</file>
+            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulation/src/caches/Simulator.java</file>
+            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulation/src/caches/LRUCache.java</file>
+            <file>file:/Users/JIANGWEI/github/CacheMiss-Simulation/src/caches/implementations/CacheObject.java</file>
         </group>
     </open-files>
 </project-private>
