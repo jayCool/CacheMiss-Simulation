@@ -1,0 +1,11 @@
+{
+    "clients":
+    [
+        {"id": "0", "cacheSize": "500", "cacheType": "6", "inputWorkloadAddress": "workload-dir/0.txt", "parent": "4"},
+        {"id": "1", "cacheSize": "500", "cacheType": "4", "inputWorkloadAddress": "workload-dir/0.txt", "parent": "4"},
+        {"id": "2", "cacheSize": "500", "cacheType": "1", "inputWorkloadAddress": "workload-dir/1.txt", "parent": "5"},
+        {"id": "3", "cacheSize": "500", "cacheType": "3", "inputWorkloadAddress": "workload-dir/2.txt", "parent": "5"},
+        {"id": "4", "cacheSize": "500", "cacheType": "3"},
+        {"id": "5", "cacheSize": "500", "cacheType": "3"}
+    ]
+}

@@ -1,0 +1,9 @@
+ {
+     "clients" : 
+	[
+         {"id" : "0", "workloadType": "1", "workloadLength" : "10000", "distinctObject": "1000"},
+         {"id" : "1", "workloadType": "2", "workloadLength" : "10000", "distinctObject": "1000", "b": "0.8", "c": "0.2"},
+         {"id" : "2", "workloadType": "3", "workloadLength" : "10000", "distinctObject": "1000", "a": "0.1" }
+    ],
+     "outputDir" : "workload-dir/"
+ }
