@@ -33,8 +33,8 @@ workload-configuration.json is a JSON file which specifies the workload.
 
 The above configuration file says that generate THREE workloads, and output to "workload-dir/"
 The first workload is a UNIFORM access workload, there are total 10000 objects, and there are 1000 distinct objects.
-The second workload is a UNIFORM access workload, there are total 10000 objects, and there are 1000 distinct objects.
-The third workload is a UNIFORM access workload, there are total 10000 objects, and there are 1000 distinct objects.
+The second workload is a B-C access workload, there are total 10000 objects, and there are 1000 distinct objects.
+The third workload is a ZIPF access workload, there are total 10000 objects, and there are 1000 distinct objects.
 
 ================================
 2. TO SIMULATE THE CACHE MISSES:

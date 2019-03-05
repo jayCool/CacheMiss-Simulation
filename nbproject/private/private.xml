@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/home/jw/GitHub/CacheMiss-Simulation/src/caches/CacheStatus.java</file>
+            <file>file:/home/jw/GitHub/CacheMiss-Simulation/src/caches/Simulator.java</file>
+            <file>file:/home/jw/GitHub/CacheMiss-Simulation/src/caches/CacheStrategy.java</file>
+            <file>file:/home/jw/GitHub/CacheMiss-Simulation/src/generator/WorkloadType.java</file>
+            <file>file:/home/jw/GitHub/CacheMiss-Simulation/src/caches/ArgumentParser.java</file>
+            <file>file:/home/jw/GitHub/CacheMiss-Simulation/src/caches/ReferencePattern.java</file>
+            <file>file:/home/jw/GitHub/CacheMiss-Simulation/src/caches/CacheType.java</file>
+            <file>file:/home/jw/GitHub/CacheMiss-Simulation/src/caches/implementations/RandomCache.java</file>
+            <file>file:/home/jw/GitHub/CacheMiss-Simulation/src/caches/implementations/CacheObject.java</file>
+            <file>file:/home/jw/GitHub/CacheMiss-Simulation/src/caches/Cache.java</file>
+            <file>file:/home/jw/GitHub/CacheMiss-Simulation/src/generator/WorkloadGenerator.java</file>
+            <file>file:/home/jw/GitHub/CacheMiss-Simulation/src/caches/Clock.java</file>
+        </group>
+    </open-files>
+</project-private>
